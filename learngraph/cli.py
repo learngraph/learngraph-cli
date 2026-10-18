@@ -10,8 +10,12 @@ from pathlib import Path
 from typing import Any
 
 import click
+from dotenv import load_dotenv
 
 from learngraph.config import ShowEnvOption, resolve_config
+
+# Fill gaps from a local .env without overriding exported variables or later flags.
+load_dotenv(Path.cwd() / ".env", override=False)
 
 
 @click.group()
