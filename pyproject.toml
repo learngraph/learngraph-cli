@@ -1,0 +1,28 @@
+[project]
+name = "learngraph-cli"
+version = "0.1.0"
+description = "Public command-line client for LearnGraph"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "CC-BY-NC-4.0" }
+dependencies = [
+  "click>=8.1",
+  "requests",
+  "python-dotenv",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+learngraph = "learngraph.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["learngraph*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
