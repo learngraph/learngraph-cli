@@ -147,3 +147,35 @@ def test_status_refreshes_expired_access_token(monkeypatch, tmp_path):
     assert saved is not None
     assert saved.access_token == "new-access"
     assert saved.refresh_token == "stable-refresh"
+
+
+def test_access_token_refreshes_and_returns_raw_token(monkeypatch, tmp_path):
+    cfg = _auth_config(tmp_path)
+    manager = AuthManager(cfg)
+    now = datetime.now(UTC)
+    manager.store.save(
+        TokenState(
+            access_token="old-access",
+            token_type="Bearer",
+            access_expires_at=now - timedelta(minutes=1),
+            refresh_token="stable-refresh",
+            refresh_expires_at=now + timedelta(days=30),
+        )
+    )
+
+    def fake_post(url, data, timeout):
+        return _FakeResponse(
+            200,
+            {
+                "access_token": "new-access",
+                "token_type": "Bearer",
+                "expires_in": 600,
+                "refresh_token": "stable-refresh",
+                "refresh_expires_in": 2592000,
+            },
+        )
+
+    monkeypatch.setattr("requests.post", fake_post)
+
+    assert manager.access_token() == "new-access"
+    assert manager.authorization_header() == "Bearer new-access"

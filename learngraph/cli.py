@@ -281,6 +281,15 @@ def auth_status_cmd() -> None:
         click.echo(f"Refresh token expires at: {token.refresh_expires_at.isoformat()}")
 
 
+@auth_group.command(name="token")
+def auth_token_cmd() -> None:
+    """Print the current access token, refreshing it when the refresh token is still valid."""
+    try:
+        click.echo(_auth_manager().access_token())
+    except Exception as exc:
+        raise click.ClickException(str(exc)) from exc
+
+
 @auth_group.command(name="logout")
 def auth_logout_cmd() -> None:
     """Delete local auth token."""
