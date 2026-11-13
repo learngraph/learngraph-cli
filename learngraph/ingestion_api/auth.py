@@ -209,19 +209,26 @@ class AuthManager:
             raise AuthError("Userinfo response was not a JSON object.")
         return body
 
+    def access_token(self) -> str:
+        """Return the current access token, refreshing it when the refresh token is still valid."""
+        return self._current_token().access_token
+
     def authorization_header(self) -> str:
+        return f"Bearer {self.access_token()}"
+
+    def _current_token(self) -> TokenState:
         token = self.store.load()
         if token is None:
             raise AuthError("Not logged in. Run: learngraph auth login")
         if token.access_valid():
-            return token.authorization_header
+            return token
         if token.refresh_valid():
             refreshed = self._refresh(
                 token.refresh_token or "",
                 previous_refresh_expires_at=token.refresh_expires_at,
             )
             self.store.save(refreshed)
-            return refreshed.authorization_header
+            return refreshed
         raise AuthError("Token expired. Run: learngraph auth login")
 
     def _request_device_code(self) -> DeviceAuthorization:

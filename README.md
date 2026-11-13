@@ -53,7 +53,8 @@ learngraph --environment prod ingest-resources "https://example.com/some-resourc
 ```
 
 `auth status` refreshes the access token when it has expired and the refresh
-token is still valid. Tokens stay in `~/.config/learngraph/auth.json`.
+token is still valid. `auth token` prints that access token and nothing else.
+Tokens stay in `~/.config/learngraph/auth.json`.
 
 `generate-topic-graph` and `ingest-resources` create graph content and spend
 AI quota. `auth login` prints a verification URL and code; approve it in the
